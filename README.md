@@ -157,6 +157,31 @@ Actually, the JVM has three types of garbage collectors, and the programmer can 
 
 3. Mostly concurrent GC – If you remember, earlier in this article, it was mentioned that the garbage collecting process is actually pretty expensive, and when it runs, all thread are paused. However, we have this mostly concurrent GC type, which states that it works concurrent to the application. However, there is a reason why it is “mostly” concurrent. It does not work 100% concurrently to the application. There is a period of time for which the threads are paused. Still, the pause is kept as short as possible to achieve the best GC performance. Actually, there are 2 types of mostly concurrent GCs:
 
-3.1 Garbage First – high throughput with a reasonable application pause time. Enabled with the option: -XX:+UseG1GC
+    3.1 Garbage First – high throughput with a reasonable application pause time. Enabled with the option: -XX:+UseG1GC
 
-3.2 Concurrent Mark Sweep – The application pause time is kept to a minimum. It can be used by specifying the option: -XX:+UseConcMarkSweepGC. As of JDK 9, this GC type is deprecated.
+    3.2 Concurrent Mark Sweep – The application pause time is kept to a minimum. It can be used by specifying the option: -XX:+UseConcMarkSweepGC. As of JDK 9, this GC type is deprecated.
+
+###Tips and Tricks
+ - To minimize the memory footprint, limit the scope of the variables as much as possible. Remember that each time the top scope from the stack is popped up, the references from that scope are lost, and this could make objects eligible for garbage collecting.
+
+ - Explicitly refer to null obsolete references. That will make objects those refer to eligible for garbage collecting.
+
+ - Avoid finalizers. They slow down the process and they do not guarantee anything. Prefer phantom references for cleanup work.
+
+ - Do not use strong references where weak or soft references apply. The most common memory pitfalls are caching scenarios,when data is held in memory even if it might not be needed.
+
+ - JVisualVM also has the functionality to make a heap dump at a certain point, so you could analyze, per class, how much memory it occupies.
+
+ - Configure your JVM based on your application requirements. Explicitly specify the heap size for the JVM when running the application. The memory allocation process is also expensive, so allocate a reasonable initial and maximum amount of memory for the heap. If you know it will not make sense to start with a small initial heap size from the beginning, the JVM will extend this memory space. Specifying the memory options with the following options:
+
+     - Initial heap size -Xms512m – set the initial heap size to 512 megabytes.
+
+     - Maximum heap size -Xmx1024m – set the maximum heap size to 1024 megabytes.
+
+     - Thread stack size -Xss128m – set the thread stack size to 128 megabytes.
+
+     - Young generation size -Xmn256m – set the young generation size to 256 megabytes.
+
+ - If a Java application crashes with an OutOfMemoryError and you need some extra info to detect the leak, run the process with the –XX:HeapDumpOnOutOfMemory parameter, which will create a heap dump file when this error happens next time.
+
+ - Use the -verbose:gc option to get the garbage collection output. Each time a garbage collection takes place, an output will be generated.
