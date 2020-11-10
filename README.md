@@ -161,7 +161,7 @@ Actually, the JVM has three types of garbage collectors, and the programmer can 
 
     3.2 Concurrent Mark Sweep – The application pause time is kept to a minimum. It can be used by specifying the option: -XX:+UseConcMarkSweepGC. As of JDK 9, this GC type is deprecated.
 
-###Tips and Tricks
+### Tips and Tricks
  - To minimize the memory footprint, limit the scope of the variables as much as possible. Remember that each time the top scope from the stack is popped up, the references from that scope are lost, and this could make objects eligible for garbage collecting.
 
  - Explicitly refer to null obsolete references. That will make objects those refer to eligible for garbage collecting.
@@ -185,3 +185,11 @@ Actually, the JVM has three types of garbage collectors, and the programmer can 
  - If a Java application crashes with an OutOfMemoryError and you need some extra info to detect the leak, run the process with the –XX:HeapDumpOnOutOfMemory parameter, which will create a heap dump file when this error happens next time.
 
  - Use the -verbose:gc option to get the garbage collection output. Each time a garbage collection takes place, an output will be generated.
+ 
+ 
+# Conclusion
+Knowing how memory is organized gives you the advantage of writing good and optimized code in terms of memory resources. In advantage, you can tune up your running JVM, by providing different configurations that are the most suitable for your running application. Spotting and fixing memory leaks is just an easy thing to do, if using the right tools.
+
+### References
+ - [Dzone](https://dzone.com/articles/java-memory-management)
+ - [Oracle](https://docs.oracle.com/en/database/oracle/oracle-database/19/jjdev/about-Java-memory-usage.html#GUID-D660F569-3654-4C5F-9D25-5D5A3E05E9AD)
