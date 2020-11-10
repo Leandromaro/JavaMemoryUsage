@@ -1,5 +1,5 @@
-# ThreadMemoryUsage
-A bunch of annotations about thread memory usage
+# Java Memory Usage
+A bunch of annotations about memory usage
 
 ## Intro
 You might think that if you are programming in Java, what do you need to know about how memory works? Java has automatic memory management, a nice and quiet garbage collector that works in the background to clean up the unused objects and free up some memory.
