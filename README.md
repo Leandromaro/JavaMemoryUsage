@@ -111,3 +111,41 @@ String localPrefix = new Integer(297).toString().intern(); //1
 Adding the above change creates the following output:
 
 __Strings are equal__
+
+
+## Garbage Collection Process
+As discussed earlier, depending on the type of reference that a variable from the stack holds to an object from the heap, at a certain point in time, that object becomes eligible for the garbage collector.
+
+![memory](https://dzone.com/storage/temp/7590184-eligible-objects14.jpg)
+
+For example, all objects that are in red are eligible to be collected by the garbage collector. You might notice that there is an object on the heap, which has strong references to other objects that are also on the heap (e.g. could be a list that has references to its items, or an object that has two referenced type fields). However, since the reference from the stack is lost, it cannot be accessed anymore, so it is garbage as well.
+
+To go a bit deeper into the details, let’s mention a few things first:
+
+ - This process is triggered automatically by Java, and it is up to Java when and whether or not to start this process.
+ - It is actually an expensive process. When the garbage collector runs, all threads in your application are paused (depending on the GC type, which will be discussed later).
+ - This is actually a more complicated process than just garbage collecting and freeing up memory.
+ 
+ Even though Java decides when to run the garbage collector, you may explicitly call System.gc() and expect that the garbage collector will run when executing this line of code, right?
+
+This is a wrong assumption.
+
+You only kind of ask Java to run the garbage collector, but it’s, again, up to it whether or not to do that. Anyway, explicitly calling System.gc() is not advised.
+
+Since this is a quite complex process, and it might affect you performance, it is implemented in a smart way. A so-called “Mark and Sweep” process is used for that. Java analyzes the variables from the stack and “marks” all the objects that need to be kept alive. Then, all the unused objects are cleaned up.
+
+So actually, Java does not collect any garbage. In fact, the more garbage there is, and the fewer that objects are marked alive, the faster the process is. To make this even more optimized, heap memory actually consists of multiple parts. We can visualize the memory usage and other useful things with JVisualVM, a tool that comes with the Java JDK. The only thing you have to do is install a plugin named Visual GC, which allows you to see how the memory is actually structured. Let’s zoom in a bit and break down the big picture:
+
+![visual memory](https://dzone.com/storage/temp/7590193-inkedjvisualvm10-li.jpg)
+
+When an object is created, it is allocated on the Eden(1) space. Because the Eden space is not that big, it gets full quite fast. The garbage collector runs on the Eden space and marks objects as alive.
+
+Once an object survives a garbage collecting process, it gets moved into a so-called survivor space S0(2). The second time the garbage collector runs on the Eden space, it moves all surviving objects into the S1(3) space. Also, everything that is currently on S0(2) is moved into the S1(3) space.
+
+If an object survives for X rounds of garbage collection (X depends on the JVM implementation, in my case it’s 8), it is most likely that it will survive forever, and it gets moved into the Old(4) space.
+
+Taking everything said so far, if you look at the garbage collector graph(6), each time it has run, you can see that the objects switch to the survivor space and that the Eden space gained space. And so on and so forth. The old generation can be also garbage collected, but since it is a bigger part of the memory compared to Eden space, it does not happen that often. The Metaspace(5) is used to store the metadata about your loaded classes in the JVM.
+
+The presented picture is actually a Java 8 application. Prior to Java 8, the structure of the memory was a bit different. The metaspace is called actually the PermGen. space. For example, in Java 6, this space also stored the memory for the string pool. Therefore, if you have too many strings in your Java 6 application, it might crash.
+
+
