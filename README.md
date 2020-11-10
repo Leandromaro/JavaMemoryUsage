@@ -17,12 +17,12 @@ In addition, variables on the stack have a certain visibility, also called scope
 
 Maybe you noticed that in the picture above, there are multiple stack memories displayed. This due to the fact that the stack memory in Java is allocated per Thread. Therefore, each time a Thread is created and started, it has its own stack memory — and cannot access another thread’s stack memory.
 
-The Heap
+## The Heap
 This part of memory stores the actual object in memory. Those are referenced by the variables from the stack. For example, let’s analyze what happens in the following line of code:
 
-´´´
+```
 StringBuilder builder = new StringBuilder();
-´´´
+```
 
 The new keyword is responsible for ensuring that there is enough free space on heap, creating an object of the StringBuilder type in memory and referring to it via the “builder” reference, which goes on the stack.
 
