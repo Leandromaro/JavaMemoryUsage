@@ -148,4 +148,15 @@ Taking everything said so far, if you look at the garbage collector graph(6), ea
 
 The presented picture is actually a Java 8 application. Prior to Java 8, the structure of the memory was a bit different. The metaspace is called actually the PermGen. space. For example, in Java 6, this space also stored the memory for the string pool. Therefore, if you have too many strings in your Java 6 application, it might crash.
 
+## Garbage Collector Types
+Actually, the JVM has three types of garbage collectors, and the programmer can choose which one should be used. By default, Java chooses the garbage collector type to be used based on the underlying hardware.
 
+1. Serial GC – A single thread collector. Mostly applies to small applications with small data usage. Can be enabled by specifying the command line option: -XX:+UseSerialGC
+
+2. Parallel GC – Even from the naming, the difference between Serial and Parallel would be that Parallel GC uses multiple threads to perform the garbage collecting process. This GC type is also known as the throughput collector. It can be enabled by explicitly specifying the option: -XX:+UseParallelGC
+
+3. Mostly concurrent GC – If you remember, earlier in this article, it was mentioned that the garbage collecting process is actually pretty expensive, and when it runs, all thread are paused. However, we have this mostly concurrent GC type, which states that it works concurrent to the application. However, there is a reason why it is “mostly” concurrent. It does not work 100% concurrently to the application. There is a period of time for which the threads are paused. Still, the pause is kept as short as possible to achieve the best GC performance. Actually, there are 2 types of mostly concurrent GCs:
+
+3.1 Garbage First – high throughput with a reasonable application pause time. Enabled with the option: -XX:+UseG1GC
+
+3.2 Concurrent Mark Sweep – The application pause time is kept to a minimum. It can be used by specifying the option: -XX:+UseConcMarkSweepGC. As of JDK 9, this GC type is deprecated.
